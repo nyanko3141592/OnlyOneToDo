@@ -1,0 +1,161 @@
+import SwiftUI
+
+struct ContentView: View {
+    @StateObject private var viewModel = ToDoViewModel()
+
+    var body: some View {
+        TabView {
+            MainView(viewModel: viewModel)
+                .tabItem {
+                    Image(systemName: "1.circle")
+                    Text("ToDo")
+                }
+
+            ToDoListView(viewModel: viewModel)
+                .tabItem {
+                    Image(systemName: "list.dash.header.rectangle")
+                    Text("List")
+                }
+
+            SettingsView(viewModel: viewModel)
+                .tabItem {
+                    Image(systemName: "gear")
+                    Text("Settings")
+                }
+        }
+    }
+}
+
+struct MainView: View {
+    @ObservedObject var viewModel: ToDoViewModel
+    let emojis: [String] = ["😀", "🙌", "", "😁", "😆", "🐟", "🤣", "😊", "😇"]
+    var body: some View {
+        ZStack {
+            if let todo = viewModel.firstUncheckedToDo {
+                SwipeCardView(toDoItem: todo, onRemove: { direction in
+                    viewModel.processSwipeAction(todo: todo, direction: direction)
+                })
+            } else {
+                VStack {
+                    Spacer()
+                    Text("You Finished All ToDos")
+                        .font(.largeTitle)
+                        .foregroundColor(.blue)
+                        .bold()
+                        .padding()
+                    Text(randomEmoji()).font(.largeTitle)
+                    Spacer()
+                }
+            }
+        }
+    }
+
+    func randomEmoji() -> String {
+        let randomIndex = Int(arc4random_uniform(UInt32(emojis.count)))
+        return emojis[randomIndex]
+    }
+}
+
+struct ToDoListView: View {
+    @ObservedObject var viewModel: ToDoViewModel
+    @State private var newToDoTitle: String = ""
+    @State private var isEditMode: Bool = false
+
+    var body: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Button(action: {
+                    isEditMode.toggle()
+                }) {
+                    Text(isEditMode ? "Done" : "Edit")
+                        .bold()
+                        .foregroundColor(.blue)
+                }
+                .padding(.trailing)
+            }
+            if viewModel.toDoList.isEmpty {
+                Spacer()
+                Text("You Can Add Your ToDo")
+                    .font(.largeTitle)
+                    .foregroundColor(.blue)
+                    .padding()
+                Spacer()
+            } else {
+                List {
+                    ForEach(viewModel.toDoList.indices, id: \.self) { index in
+                        HStack {
+                            if isEditMode {
+                                TextField("Edit ToDo Title", text: Binding(
+                                    get: { viewModel.toDoList[index].title },
+                                    set: { viewModel.toDoList[index].title = $0; viewModel.saveData() }
+                                ))
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            } else {
+                                Button(action: {
+                                    viewModel.toggleToDoStatus(todo: viewModel.toDoList[index])
+                                }) {
+                                    HStack {
+                                        Text(viewModel.toDoList[index].title)
+                                            .strikethrough(viewModel.toDoList[index].isChecked, color: .red)
+                                            .foregroundColor(viewModel.toDoList[index].isChecked ? .gray : .black)
+                                        Spacer()
+                                        if viewModel.toDoList[index].isChecked {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .foregroundColor(.green)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .onDelete(perform: viewModel.deleteToDo)
+                    .onMove(perform: viewModel.moveToDo)
+                }
+            }
+
+            HStack {
+                TextField("Enter New ToDo", text: $newToDoTitle)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.horizontal)
+
+                Button(action: {
+                    if newToDoTitle != "" {
+                        viewModel.addToDoWithTitle(title: newToDoTitle)
+                        newToDoTitle = ""
+                    }
+                }) {
+                    Text("Add ToDo")
+                        .bold()
+                        .foregroundColor(.white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 16)
+                        .background(Color.blue)
+                        .cornerRadius(8)
+                }
+            }
+            .padding(.bottom)
+        }
+    }
+}
+
+struct SettingsView: View {
+    @ObservedObject var viewModel: ToDoViewModel
+
+    var body: some View {
+        VStack {
+            Form {
+                DatePicker("Reset Time", selection: $viewModel.resetTime, displayedComponents: .hourAndMinute)
+            }
+            .padding(.top)
+
+            Spacer()
+        }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
