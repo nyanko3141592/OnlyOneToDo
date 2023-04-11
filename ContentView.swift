@@ -28,7 +28,7 @@ struct ContentView: View {
 
 struct MainView: View {
     @ObservedObject var viewModel: ToDoViewModel
-    let emojis: [String] = ["😀", "🙌", "😁", "😆", "🐟", "🤣", "😊", "😇", "🍙", "🍣", "🧹", "🚽", "💤", "☎️"]
+    let emojis: [String] = ["😀", "🙌", "🍳", "🍣", "🧹", "🚽", "💤", "☎️", "🚿", "🛀"]
     var body: some View {
         ZStack {
             if let todo = viewModel.firstUncheckedToDo {
@@ -60,7 +60,10 @@ struct MainView: View {
 struct ToDoListView: View {
     @ObservedObject var viewModel: ToDoViewModel
     @State private var newToDoTitle: String = ""
+    @State private var newToDoEmoji: String = ""
     @State private var isEditMode: Bool = false
+
+    let todoEmojis: [String] = ["😀", "🙌", "😁", "😆", "🐟", "🤣", "😊", "😇", "🍙", "🍣", "🧹", "🚽", "💤", "☎️"]
 
     var body: some View {
         VStack {
@@ -97,7 +100,7 @@ struct ToDoListView: View {
                                     viewModel.toggleToDoStatus(todo: viewModel.toDoList[index])
                                 }) {
                                     HStack {
-                                        Text(viewModel.toDoList[index].title)
+                                        Text(viewModel.toDoList[index].emoji + viewModel.toDoList[index].title)
                                             .strikethrough(viewModel.toDoList[index].isChecked, color: .red)
                                             .foregroundColor(viewModel.toDoList[index].isChecked ? .gray : .black)
                                         Spacer()
@@ -116,13 +119,19 @@ struct ToDoListView: View {
                 .environment(\.editMode, isEditMode ? .constant(.active) : .constant(.inactive))
             }
             HStack {
+                Picker("", selection: $newToDoEmoji) {
+                    ForEach(todoEmojis, id: \.self) { emoji in
+                        Text(emoji)
+                            .font(.largeTitle)
+                    }
+                }
+                .pickerStyle(WheelPickerStyle())
+                .frame(width: 100, height: 100)
                 TextField("Enter New ToDo", text: $newToDoTitle)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding(.horizontal)
-
                 Button(action: {
                     if newToDoTitle != "" {
-                        viewModel.addToDoWithTitle(title: newToDoTitle)
+                        viewModel.addToDoWithTitle(title: newToDoTitle, emoji: newToDoEmoji)
                         newToDoTitle = ""
                     }
                 }) {

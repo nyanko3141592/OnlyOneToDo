@@ -28,7 +28,7 @@ class ToDoViewModel: ObservableObject {
     }
 
     func addToDo() {
-        let newItem = ToDoItem(title: "New ToDo", isChecked: false)
+        let newItem = ToDoItem(emoji: "😆", title: "New ToDo", isChecked: false)
         toDoList.append(newItem)
         saveData()
     }
@@ -91,8 +91,8 @@ class ToDoViewModel: ObservableObject {
         saveData()
     }
 
-    func addToDoWithTitle(title: String) {
-        let newItem = ToDoItem(title: title, isChecked: false)
+    func addToDoWithTitle(title: String, emoji: String) {
+        let newItem = ToDoItem(emoji: emoji, title: title, isChecked: false)
         toDoList.append(newItem)
         saveData()
     }
@@ -105,6 +105,7 @@ class ToDoViewModel: ObservableObject {
 
 struct ToDoItem: Identifiable, Codable {
     var id = UUID()
+    var emoji: String = "😆"
     var title: String
     var isChecked: Bool
 }

@@ -16,9 +16,12 @@ struct SwipeCardView: View {
             VStack {
                 Spacer()
                 Text(toDoItem.title)
-                    .font(.largeTitle)
+                    .font(.system(size: 100))
                     .fontWeight(.black)
                     .foregroundColor(.white)
+                    .padding()
+                Text(toDoItem.emoji)
+                    .font(.system(size: 100))
                     .padding()
                 Spacer()
             }
@@ -87,6 +90,6 @@ extension SwipeCardView {
 
 struct SwipeCardView_Previews: PreviewProvider {
     static var previews: some View {
-        SwipeCardView(toDoItem: ToDoItem(title: "Sample ToDo", isChecked: false), onRemove: { _ in })
+        SwipeCardView(toDoItem: ToDoItem(emoji: "😆", title: "Sample ToDo", isChecked: false), onRemove: { _ in })
     }
 }
