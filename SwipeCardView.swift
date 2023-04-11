@@ -1,10 +1,3 @@
-//
-//  SwipeCardView.swift
-//  OnlyOneToDo
-//
-//  Created by 高橋直希 on 2023/04/12.
-//
-
 import SwiftUI
 
 struct SwipeCardView: View {

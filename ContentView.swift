@@ -134,7 +134,7 @@ struct ToDoListView: View {
                         .cornerRadius(8)
                 }
             }
-            .padding(.bottom)
+            .padding()
         }
     }
 }
