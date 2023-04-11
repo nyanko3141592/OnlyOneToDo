@@ -13,11 +13,12 @@ struct SwipeCardView: View {
             RoundedRectangle(cornerRadius: 30)
                 .fill(background)
                 .shadow(radius: 4)
-
             VStack {
                 Spacer()
                 Text(toDoItem.title)
                     .font(.largeTitle)
+                    .fontWeight(.black)
+                    .foregroundColor(.white)
                     .padding()
                 Spacer()
             }
@@ -59,14 +60,14 @@ struct SwipeCardView: View {
     private var background: Color {
         switch swipeStatus {
         case .none:
-            return .red
+            return .blue
         case .swiping(let translation):
-            if abs(translation.width) > bounds.width / 2 - 30 {
-                return .blue
+            if translation.width > bounds.width / 2 - 30 {
+                return .red
             }
-            return .red
-        case .swiped(let direction):
-            return direction == .left ? .red : .green
+            return .blue
+        case .swiped:
+            return .blue
         }
     }
 }

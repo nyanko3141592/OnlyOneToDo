@@ -14,7 +14,7 @@ struct ContentView: View {
             ToDoListView(viewModel: viewModel)
                 .tabItem {
                     Image(systemName: "list.dash.header.rectangle")
-                    Text("List")
+                    Text("routine")
                 }
 
             SettingsView(viewModel: viewModel)
@@ -28,13 +28,14 @@ struct ContentView: View {
 
 struct MainView: View {
     @ObservedObject var viewModel: ToDoViewModel
-    let emojis: [String] = ["😀", "🙌", "", "😁", "😆", "🐟", "🤣", "😊", "😇"]
+    let emojis: [String] = ["😀", "🙌", "😁", "😆", "🐟", "🤣", "😊", "😇", "🍙", "🍣", "🧹", "🚽", "💤", "☎️"]
     var body: some View {
         ZStack {
             if let todo = viewModel.firstUncheckedToDo {
                 SwipeCardView(toDoItem: todo, onRemove: { direction in
                     viewModel.processSwipeAction(todo: todo, direction: direction)
                 })
+                Spacer()
             } else {
                 VStack {
                     Spacer()
@@ -43,14 +44,14 @@ struct MainView: View {
                         .foregroundColor(.blue)
                         .bold()
                         .padding()
-                    Text(randomEmoji()).font(.largeTitle)
+                    Text(randomEmoji(emojis: emojis)).font(.largeTitle)
                     Spacer()
                 }
             }
         }
     }
 
-    func randomEmoji() -> String {
+    func randomEmoji(emojis: [String]) -> String {
         let randomIndex = Int(arc4random_uniform(UInt32(emojis.count)))
         return emojis[randomIndex]
     }
@@ -144,10 +145,13 @@ struct SettingsView: View {
 
     var body: some View {
         VStack {
-            Form {
-                DatePicker("Reset Time", selection: $viewModel.resetTime, displayedComponents: .hourAndMinute)
-            }
-            .padding(.top)
+            Group {
+                Form {
+                    Text("This is reset time. This all routines unchecked at the time")
+                    DatePicker("Reset Time", selection: $viewModel.resetTime, displayedComponents: .hourAndMinute)
+                }
+
+            }.padding()
 
             Spacer()
         }
