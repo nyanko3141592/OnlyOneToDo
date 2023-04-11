@@ -112,8 +112,8 @@ struct ToDoListView: View {
                     .onDelete(perform: viewModel.deleteToDo)
                     .onMove(perform: viewModel.moveToDo)
                 }
+                .environment(\.editMode, isEditMode ? .constant(.active) : .constant(.inactive))
             }
-
             HStack {
                 TextField("Enter New ToDo", text: $newToDoTitle)
                     .textFieldStyle(RoundedBorderTextFieldStyle())

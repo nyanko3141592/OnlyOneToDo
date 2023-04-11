@@ -96,6 +96,11 @@ class ToDoViewModel: ObservableObject {
         toDoList.append(newItem)
         saveData()
     }
+
+    var nextUncheckedToDo: ToDoItem? {
+        guard let currentIndex = toDoList.firstIndex(where: { !$0.isChecked }) else { return nil }
+        return toDoList.indices.contains(currentIndex + 1) ? toDoList[currentIndex + 1] : nil
+    }
 }
 
 struct ToDoItem: Identifiable, Codable {
