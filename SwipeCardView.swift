@@ -16,7 +16,7 @@ struct SwipeCardView: View {
             VStack {
                 Spacer()
                 Text(toDoItem.title)
-                    .font(.system(size: 100))
+                    .font(.largeTitle)
                     .fontWeight(.black)
                     .foregroundColor(.white)
                     .padding()

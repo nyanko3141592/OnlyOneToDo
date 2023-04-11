@@ -28,7 +28,7 @@ struct ContentView: View {
 
 struct MainView: View {
     @ObservedObject var viewModel: ToDoViewModel
-    let emojis: [String] = ["😀", "🙌", "🍳", "🍣", "🧹", "🚽", "💤", "☎️", "🚿", "🛀"]
+    let emojis: [String] = ["😀", "🙌", "😁", "😆", "🐟", "🤣", "😊", "😇", "🍙", "🍣", "🧹", "🚽", "💤", "☎️"]
     var body: some View {
         ZStack {
             if let todo = viewModel.firstUncheckedToDo {
@@ -63,7 +63,7 @@ struct ToDoListView: View {
     @State private var newToDoEmoji: String = ""
     @State private var isEditMode: Bool = false
 
-    let todoEmojis: [String] = ["😀", "🙌", "😁", "😆", "🐟", "🤣", "😊", "😇", "🍙", "🍣", "🧹", "🚽", "💤", "☎️"]
+    let todoEmojis: [String] = ["😆", "🍔", "🍣", "🧹", "🚽", "💤", "☎️", "💊", "🏥", "💉"]
 
     var body: some View {
         VStack {
@@ -125,17 +125,15 @@ struct ToDoListView: View {
                             .font(.largeTitle)
                     }
                 }
-                .pickerStyle(WheelPickerStyle())
-                .frame(width: 100, height: 100)
                 TextField("Enter New ToDo", text: $newToDoTitle)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 Button(action: {
                     if newToDoTitle != "" {
-                        viewModel.addToDoWithTitle(title: newToDoTitle, emoji: newToDoEmoji)
+                        viewModel.addToDoWithTitle(title: newToDoTitle, emoji: newToDoEmoji != "" ? newToDoEmoji : "😢")
                         newToDoTitle = ""
                     }
                 }) {
-                    Text("Add ToDo")
+                    Text("+")
                         .bold()
                         .foregroundColor(.white)
                         .padding(.vertical, 10)
