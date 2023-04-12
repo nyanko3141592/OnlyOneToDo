@@ -5,7 +5,7 @@ class ToDoViewModel: ObservableObject {
     @Published var toDoList: [ToDoItem] = []
     @Published var resetTime = Date()
 
-    private var cancellables: Set<AnyCancellable> = []
+    private var cancellables: Set<AnyCancellable> = [] ｗ
 
     init() {
         // Load the saved ToDo list
@@ -19,6 +19,7 @@ class ToDoViewModel: ObservableObject {
             .store(in: &cancellables)
 
         // Reset unchecked ToDo items each morning
+        let resetDate = Calendar.current.startOfDay(for: Date()).addingTimeInterval(resetTime.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 86400))
         Timer.publish(every: 60, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
@@ -29,11 +30,11 @@ class ToDoViewModel: ObservableObject {
         // Reset unchecked ToDo items on the first app launch after reset time
         let lastResetDate = UserDefaults.standard.object(forKey: "LastResetDate") as? Date ?? Date.distantPast
         let timeComponents = Calendar.current.dateComponents([.hour, .minute], from: resetTime)
-        let resetDate = Calendar.current.nextDate(after: lastResetDate, matching: timeComponents, matchingPolicy: .strict, direction: .backward) ?? Date.distantPast
-        if resetDate == Date.distantPast {
+        let resetDateOnLaunch = Calendar.current.nextDate(after: lastResetDate, matching: timeComponents, matchingPolicy: .strict, direction: .backward) ?? Date.distantPast
+        if resetDateOnLaunch == Date.distantPast {
             resetToDos()
         }
-        UserDefaults.standard.set(resetDate, forKey: "LastResetDate")
+        UserDefaults.standard.set(resetDateOnLaunch, forKey: "LastResetDate")
     }
 
     func addToDo() {
@@ -62,8 +63,13 @@ class ToDoViewModel: ObservableObject {
     func processSwipeAction(todo: ToDoItem, direction: SwipeCardView.SwipeDirection) {
         if direction == .right {
             toggleToDoStatus(todo: todo)
+        } else if direction == .left {
+            if let index = toDoList.firstIndex(where: { $0.id == todo.id }) {
+                let removedItem = toDoList.remove(at: index)
+                toDoList.append(removedItem)
+                saveData()
+            }
         }
-        saveData()
     }
 
     var firstUncheckedToDo: ToDoItem? {

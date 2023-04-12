@@ -67,6 +67,8 @@ struct SwipeCardView: View {
         case .swiping(let translation):
             if translation.width > bounds.width / 2 - 30 {
                 return .red
+            } else if (translation.width) < -bounds.width / 2 - 30 {
+                return .green
             }
             return .blue
         case .swiped:
