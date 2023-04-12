@@ -1,17 +1,21 @@
 import SwiftUI
 
-
 struct ToDoListView: View {
     @ObservedObject var viewModel: ToDoViewModel
     @State private var newToDoTitle: String = ""
     @State private var newToDoEmoji: String = ""
     @State private var isEditMode: Bool = false
-    
+
     let todoEmojis: [String] = ["😆", "🍔", "🍣", "🧹", "🚽", "💤", "☎️", "💊", "🏥", "💉"]
-    
+
     var body: some View {
         VStack {
             HStack {
+                Spacer()
+                VStack {
+                    Text("Your Routine").font(.title)
+                    Text("All ToDos are unchecked every morning.")
+                }.padding()
                 Spacer()
                 Button(action: {
                     isEditMode.toggle()
@@ -62,6 +66,7 @@ struct ToDoListView: View {
                 }
                 .environment(\.editMode, isEditMode ? .constant(.active) : .constant(.inactive))
             }
+
             HStack {
                 Picker("", selection: $newToDoEmoji) {
                     ForEach(todoEmojis, id: \.self) { emoji in

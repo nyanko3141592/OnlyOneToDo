@@ -5,7 +5,7 @@ class ToDoViewModel: ObservableObject {
     @Published var toDoList: [ToDoItem] = []
     @Published var resetTime = Date()
 
-    private var cancellables: Set<AnyCancellable> = [] ｗ
+    private var cancellables: Set<AnyCancellable> = []
 
     init() {
         // Load the saved ToDo list
@@ -19,7 +19,6 @@ class ToDoViewModel: ObservableObject {
             .store(in: &cancellables)
 
         // Reset unchecked ToDo items each morning
-        let resetDate = Calendar.current.startOfDay(for: Date()).addingTimeInterval(resetTime.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 86400))
         Timer.publish(every: 60, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
@@ -118,9 +117,13 @@ class ToDoViewModel: ObservableObject {
     }
 }
 
-struct ToDoItem: Identifiable, Codable {
+struct ToDoItem: Identifiable, Codable, Hashable {
     var id = UUID()
     var emoji: String = "😆"
     var title: String
     var isChecked: Bool
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }

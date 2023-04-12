@@ -1,6 +1,5 @@
 import SwiftUI
 
-
 struct MainView: View {
     @ObservedObject var viewModel: ToDoViewModel
     let emojis: [String] = ["😀", "🙌", "😁", "😆", "🐟", "🤣", "😊", "😇", "🍙", "🍣", "🧹", "🚽", "💤", "☎️"]
@@ -23,9 +22,23 @@ struct MainView: View {
                     Spacer()
                 }
             }
+            VStack {
+                HStack {
+                    Text("←Yet")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding()
+                    Spacer()
+                    Text("Done→")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding()
+                }.foregroundColor(.white).padding()
+                Spacer()
+            }
         }
     }
-    
+
     func randomEmoji(emojis: [String]) -> String {
         let randomIndex = Int(arc4random_uniform(UInt32(emojis.count)))
         return emojis[randomIndex]
