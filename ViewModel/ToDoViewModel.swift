@@ -1,3 +1,4 @@
+import AVFoundation
 import Combine
 import SwiftUI
 
@@ -6,6 +7,7 @@ class ToDoViewModel: ObservableObject {
     @Published var resetTime = Date()
     @Published var cardViewUncheckedItem: ToDoItem?
     var currentUnckecedItem: Int = 0
+    private var audioPlayer: AVAudioPlayer?
 
     private var cancellables: Set<AnyCancellable> = []
 
@@ -73,9 +75,10 @@ class ToDoViewModel: ObservableObject {
             currentUnckecedItem += 1
         }
         updateCardViewUncheckedItem()
+        playSound(sound: "swipe", type: "mp3")
     }
 
-    private func updateCardViewUncheckedItem() {
+    func updateCardViewUncheckedItem() {
         let uncheckedList: [ToDoItem] = uncheckedToDos()
         if currentUnckecedItem >= uncheckedList.count {
             currentUnckecedItem = 0
@@ -126,6 +129,17 @@ class ToDoViewModel: ObservableObject {
     var nextUncheckedToDo: ToDoItem? {
         guard let currentIndex = toDoList.firstIndex(where: { !$0.isChecked }) else { return nil }
         return toDoList.indices.contains(currentIndex + 1) ? toDoList[currentIndex + 1] : nil
+    }
+
+    func playSound(sound: String, type: String) {
+        if let path = Bundle.main.path(forResource: sound, ofType: type) {
+            do {
+                audioPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: path))
+                audioPlayer?.play()
+            } catch {
+                print("ERROR")
+            }
+        }
     }
 }
 
