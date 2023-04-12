@@ -5,11 +5,25 @@ struct MainView: View {
     let emojis: [String] = ["😀", "🙌", "😁", "😆", "🐟", "🤣", "😊", "😇", "🍙", "🍣", "🧹", "🚽", "💤", "☎️"]
     var body: some View {
         ZStack {
-            if let todo = viewModel.firstUncheckedToDo {
+            if let todo = viewModel.cardViewUncheckedItem {
                 SwipeCardView(toDoItem: todo, onRemove: { direction in
                     viewModel.processSwipeAction(todo: todo, direction: direction)
                 })
                 Spacer()
+                VStack {
+                    HStack {
+                        Text("←Yet")
+                            .font(.largeTitle)
+                            .bold()
+                            .padding()
+                        Spacer()
+                        Text("Done→")
+                            .font(.largeTitle)
+                            .bold()
+                            .padding()
+                    }.foregroundColor(.white).padding()
+                    Spacer()
+                }
             } else {
                 VStack {
                     Spacer()
@@ -21,20 +35,6 @@ struct MainView: View {
                     Text(randomEmoji(emojis: emojis)).font(.largeTitle)
                     Spacer()
                 }
-            }
-            VStack {
-                HStack {
-                    Text("←Yet")
-                        .font(.largeTitle)
-                        .bold()
-                        .padding()
-                    Spacer()
-                    Text("Done→")
-                        .font(.largeTitle)
-                        .bold()
-                        .padding()
-                }.foregroundColor(.white).padding()
-                Spacer()
             }
         }
     }

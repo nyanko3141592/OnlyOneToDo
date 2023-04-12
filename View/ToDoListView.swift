@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ToDoListView: View {
+    @Environment(\.colorScheme) var colorScheme
     @ObservedObject var viewModel: ToDoViewModel
     @State private var newToDoTitle: String = ""
     @State private var newToDoEmoji: String = ""
@@ -51,7 +52,7 @@ struct ToDoListView: View {
                                     HStack {
                                         Text(viewModel.toDoList[index].emoji + viewModel.toDoList[index].title)
                                             .strikethrough(viewModel.toDoList[index].isChecked, color: .red)
-                                            .foregroundColor(viewModel.toDoList[index].isChecked ? .gray : .black)
+                                            .foregroundColor(viewModel.toDoList[index].isChecked ? .gray : colorScheme == .dark ? Color.white : Color.black)
                                         Spacer()
                                         if viewModel.toDoList[index].isChecked {
                                             Image(systemName: "checkmark.circle.fill")

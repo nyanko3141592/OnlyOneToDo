@@ -4,6 +4,8 @@ import SwiftUI
 class ToDoViewModel: ObservableObject {
     @Published var toDoList: [ToDoItem] = []
     @Published var resetTime = Date()
+    @Published var cardViewUncheckedItem: ToDoItem?
+    var currentUnckecedItem: Int = 0
 
     private var cancellables: Set<AnyCancellable> = []
 
@@ -34,6 +36,9 @@ class ToDoViewModel: ObservableObject {
             resetToDos()
         }
         UserDefaults.standard.set(resetDateOnLaunch, forKey: "LastResetDate")
+
+        // Set the initial unchecked item
+        updateCardViewUncheckedItem()
     }
 
     func addToDo() {
@@ -61,18 +66,25 @@ class ToDoViewModel: ObservableObject {
 
     func processSwipeAction(todo: ToDoItem, direction: SwipeCardView.SwipeDirection) {
         if direction == .right {
+            // right swipe
             toggleToDoStatus(todo: todo)
         } else if direction == .left {
-            if let index = toDoList.firstIndex(where: { $0.id == todo.id }) {
-                let removedItem = toDoList.remove(at: index)
-                toDoList.append(removedItem)
-                saveData()
-            }
+            // left swipe
+            currentUnckecedItem += 1
         }
+        updateCardViewUncheckedItem()
     }
 
-    var firstUncheckedToDo: ToDoItem? {
-        return toDoList.first(where: { !$0.isChecked })
+    private func updateCardViewUncheckedItem() {
+        let uncheckedList: [ToDoItem] = uncheckedToDos()
+        if currentUnckecedItem >= uncheckedList.count {
+            currentUnckecedItem = 0
+        }
+        cardViewUncheckedItem = uncheckedList.isEmpty ? nil : uncheckedList[currentUnckecedItem]
+    }
+
+    func uncheckedToDos() -> [ToDoItem] {
+        return toDoList.filter { !$0.isChecked }
     }
 
     func saveData() {
