@@ -10,7 +10,7 @@ struct ContentView: View {
         TabView(selection: $selectedTab) {
             MainView(viewModel: viewModel)
                 .tabItem {
-                    Image(systemName: "list.bullet")
+                    Image(systemName: "1.circle")
                     Text("To-Do List")
                 }.tag(0)
                 .onReceive(tabSelectionSubject) { _ in
@@ -20,7 +20,7 @@ struct ContentView: View {
                 }
             ToDoListView(viewModel: viewModel)
                 .tabItem {
-                    Image(systemName: "list.dash.header.rectangle")
+                    Image(systemName: "list.bullet")
                     Text("routine")
                 }.tag(1)
 
