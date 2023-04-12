@@ -25,6 +25,15 @@ class ToDoViewModel: ObservableObject {
                 self?.checkResetTime()
             }
             .store(in: &cancellables)
+
+        // Reset unchecked ToDo items on the first app launch after reset time
+        let lastResetDate = UserDefaults.standard.object(forKey: "LastResetDate") as? Date ?? Date.distantPast
+        let timeComponents = Calendar.current.dateComponents([.hour, .minute], from: resetTime)
+        let resetDate = Calendar.current.nextDate(after: lastResetDate, matching: timeComponents, matchingPolicy: .strict, direction: .backward) ?? Date.distantPast
+        if resetDate == Date.distantPast {
+            resetToDos()
+        }
+        UserDefaults.standard.set(resetDate, forKey: "LastResetDate")
     }
 
     func addToDo() {
