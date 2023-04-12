@@ -15,6 +15,7 @@ struct ToDoListView: View {
                 VStack {
                     Text("Your Routine").font(.title)
                     Text("All ToDos are unchecked every morning.")
+                        .font(.subheadline)
                 }.padding()
                 Spacer()
                 Button(action: {
